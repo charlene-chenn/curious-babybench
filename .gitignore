@@ -5,3 +5,5 @@ files/files/results/
 
 # Unwanted files
 .DS_Store
+.pyc
+__pycache__/
