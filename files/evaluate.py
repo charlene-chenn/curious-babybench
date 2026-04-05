@@ -17,11 +17,26 @@ This will scan all runs in results/ and produce comparative plots.
 """
 
 import os
+import sys
 import json
 import argparse
 import numpy as np
+import torch
+import yaml
 from collections import defaultdict
 from typing import Dict, List
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_REPO_ROOT = os.path.abspath(os.path.join(_HERE, ".."))
+_MIMO_ROOT = os.path.join(_REPO_ROOT, "MIMo")
+for _path in (_HERE, _REPO_ROOT, _MIMO_ROOT):
+    if _path not in sys.path:
+        sys.path.insert(0, _path)
+
+import mimoEnv
+import babybench.utils as bb_utils
+import babybench.eval as bb_eval
+from agent import Actor
 
 # Try to import matplotlib — if not available, we'll create data-only output
 try:
@@ -293,6 +308,101 @@ def generate_report(results_dir: str):
     print("[EVAL] Use these in your 3-minute video!")
 
 
+def flatten_obs(obs):
+    """Flatten observation dict into a single vector (matches BabyBenchWrapper)."""
+    if isinstance(obs, dict):
+        parts = []
+        if "observation" in obs:
+            parts.append(obs["observation"])
+        if "touch" in obs:
+            parts.append(obs["touch"])
+        return np.concatenate(parts).astype(np.float32)
+    return np.asarray(obs, dtype=np.float32)
+
+
+def load_policy(checkpoint_path, device):
+    """Load a trained Actor from a training checkpoint."""
+    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    cfg = checkpoint["config"]
+
+    actor = Actor(
+        obs_dim=cfg["proprio_dim"] + cfg["touch_dim"] + cfg["vision_dim"],
+        action_dim=cfg["action_dim"],
+        hidden_dim=cfg["hidden_dim"],
+        num_layers=cfg["policy_layers"],
+    ).to(device)
+    actor.load_state_dict(checkpoint["actor"])
+    actor.eval()
+
+    print(f"[EVAL] Loaded policy from {checkpoint_path}")
+    print(f"[EVAL] Checkpoint was from episode {checkpoint['episode']}, "
+          f"alpha={cfg['alpha']}, seed={cfg['seed']}")
+    return actor
+
+
+def select_action(actor, obs, device):
+    """Select a deterministic action from the trained policy."""
+    obs_flat = flatten_obs(obs)
+    obs_t = torch.FloatTensor(obs_flat).unsqueeze(0).to(device)
+    with torch.no_grad():
+        action, _ = actor.get_action(obs_t, deterministic=True)
+    return action.cpu().numpy().squeeze(0)
+
+
+def record_video(config_path, checkpoint_path=None, episodes=3, duration=1000):
+    """
+    Run evaluation episodes with video recording.
+
+    Args:
+        config_path: Path to the BabyBench YAML config (e.g. config_selftouch.yml)
+        checkpoint_path: Path to a trained .pt checkpoint. If None, uses random actions.
+        episodes: Number of evaluation episodes to record.
+        duration: Timesteps per episode.
+    """
+    with open(config_path) as f:
+        config = yaml.safe_load(f)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    # Load trained policy if checkpoint provided
+    actor = None
+    if checkpoint_path is not None:
+        actor = load_policy(checkpoint_path, device)
+    else:
+        print("[EVAL] No checkpoint provided — using random actions.")
+
+    env = bb_utils.make_env(config, training=False)
+    env.reset()
+
+    evaluation = bb_eval.EVALS[config['behavior']](
+        env=env,
+        duration=duration,
+        render=True,
+        save_dir=config['save_dir'],
+    )
+
+    evaluation.eval_logs()
+
+    for ep_idx in range(episodes):
+        print(f'Running evaluation episode {ep_idx+1}/{episodes}')
+
+        obs, _ = env.reset()
+        evaluation.reset()
+
+        for t_idx in range(duration):
+            if actor is not None:
+                action = select_action(actor, obs, device)
+            else:
+                action = env.action_space.sample()
+
+            obs, _, _, _, info = env.step(action)
+            evaluation.eval_step(info)
+
+        evaluation.end(episode=ep_idx)
+
+    print(f"[EVAL] Videos saved to {config['save_dir']}/videos/")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Evaluate self-touch experiment results"
@@ -301,5 +411,29 @@ if __name__ == "__main__":
         "--results_dir", type=str, default="results",
         help="Directory containing training runs"
     )
+    parser.add_argument(
+        "--video", action="store_true",
+        help="Record evaluation videos instead of generating plots"
+    )
+    parser.add_argument(
+        "--config", type=str, default="config_selftouch.yml",
+        help="BabyBench YAML config for video recording"
+    )
+    parser.add_argument(
+        "--checkpoint", type=str, default=None,
+        help="Path to trained checkpoint (.pt) for video recording"
+    )
+    parser.add_argument(
+        "--episodes", type=int, default=3,
+        help="Number of evaluation episodes for video recording"
+    )
+    parser.add_argument(
+        "--duration", type=int, default=1000,
+        help="Timesteps per evaluation episode"
+    )
     args = parser.parse_args()
-    generate_report(args.results_dir)
+
+    if args.video:
+        record_video(args.config, args.checkpoint, args.episodes, args.duration)
+    else:
+        generate_report(args.results_dir)
