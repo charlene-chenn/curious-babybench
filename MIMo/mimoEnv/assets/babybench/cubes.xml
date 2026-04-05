@@ -1,0 +1,118 @@
+<mujocoinclude>
+
+    <asset>
+        <material name="antique_fucsia" rgba="0.57 .36 .51 1" shininess="0.99" reflectance="0"/>
+		<material name="pastel_purple" rgba="0.69 .61 .85 1" shininess="0.99" reflectance="0"/>
+		<material name="apricot" rgba="0.98 .80 .69 1" shininess="0.99" reflectance="0"/>
+		<material name="acqua" rgba="0.73 .83 .90 1" shininess="0.99" reflectance="0"/>
+		<material name="brick_red" rgba=".79 .25 .32 1" shininess="0.99" reflectance="0"/>
+		<material name="cambridge_blue" rgba=".64 .76 .68 1" shininess="0.99" reflectance="0"/>
+		<material name="flax" rgba=".93 .86 .51 1" shininess="0.99" reflectance="0"/>
+		<material name="corn_blue" rgba=".58 .80 .92 1" shininess="0.99" reflectance="0"/>
+		<material name="coral" rgba=".94 .50 .50 1" shininess="0.99" reflectance="0"/>
+    </asset>
+
+
+    <worldbody>
+        <body name="red_cube" pos=".05 0.3 0.03">
+			<freejoint/>
+			<geom type="box" material="brick_red" size="0.03 0.03 0.03" pos="0 0 0" density="200"/>
+		</body>
+		
+		<body name="yellow_cube" pos=".06 0.3 0.1" euler="0 0 10">
+			<freejoint/>
+			<geom type="box" material="flax" size="0.03 0.03 0.03" pos="0 0 0" density="200"/>
+		</body>
+		
+		<body name="blue_cube" pos=".06 0.3 0.16" euler="0 0 15">
+			<freejoint/>
+			<geom type="box" material="cambridge_blue" size="0.02 0.02 0.02" pos="0 0 0" density="200"/>
+		</body>
+		
+		<body name="green_sphere" pos=".1 -0.2 0.03">
+			<freejoint/>
+			<geom type="sphere" material="cambridge_blue" size="0.025" pos="0 0 0" density="200"/>
+		</body>
+		
+		<body name="blue_sphere" pos=".15 -0.3 0.02">
+			<freejoint/>
+			<geom type="sphere" material="antique_fucsia" size="0.02" pos="0 0 0" density="200"/>
+		</body>
+		
+		<body name="orange_sphere" pos=".1 .2 0.04">
+			<freejoint/>
+			<geom type="sphere" material="apricot" size="0.04" pos="0 0 0" density="200"/>
+		</body>
+
+        <body name="red_sphere" pos="-.15 .35 0.11">
+			<freejoint/>
+			<geom type="sphere" material="brick_red" size="0.1" pos="0 0 0" density="200"/>
+		</body>	
+
+        <body name="yellow_sphere" pos="-.16 -.14 0.05">
+			<freejoint/>
+			<geom type="sphere" material="flax" size="0.05" pos="0 0 0" density="200"/>
+		</body>	        
+		
+		<body name="castle_base1" pos="-.2 -.4 .05" euler="0 0 40">
+			<freejoint/>
+			<geom type="box" material="antique_fucsia" size=".03 .03 .05" density="200"/>
+		</body>
+		
+		<body name="castle_base2" pos="-.1 -.5 .05" euler="0 0 70">
+			<freejoint/>
+			<geom type="box" material="coral" size=".03 .03 .05" density="200"/>
+		</body>
+		
+		<body name="castle_bridge" pos="-.15 -.45 .12" euler="0 0 45">
+			<freejoint/>
+			<geom type="box" material="corn_blue" size=".045 .125 .025" density="200"/>
+		</body>
+		
+		<body name="castle_top1" pos="-.10 -.5 .18" euler="0 0 50">
+			<freejoint/>
+			<geom type="box" material="cambridge_blue" size=".03 .03 .03" density="200"/>
+		</body>
+		
+		<body name="castle_tower1" pos="-.175 -.425 .2" euler="0 0 50">
+			<freejoint/>
+			<geom type="box" material="flax" size=".03 .03 .05" density="200"/>
+		</body>
+		
+		<body name="castle_top2" pos="0.35 -.03 .03" euler="0 0 55">
+			<freejoint/>
+			<geom type="box" material="apricot" size=".03 .03 .03" density="200"/>
+		</body>
+		
+		<body name="castle_top3" pos="-.05 -.205 .03" euler="0 0 45">
+			<freejoint/>
+			<geom type="box" material="acqua" size=".03 .03 .03" density="200"/>
+		</body>
+		
+		<body name="castle_top4" pos="-.175 -.425 .28" euler="0 0 30">
+			<freejoint/>
+			<geom type="box" material="coral" size=".03 .03 .03" density="200"/>
+		</body>
+    </worldbody>
+
+	<equality>
+		<weld body1="mimo_location"/>
+		<joint joint1="robot:hip_bend1" polycoef="0.532 0 0 0 0"/>
+		<joint joint1="robot:hip_lean1" polycoef="0 0 0 0 0"/>
+		<joint joint1="robot:hip_rot1" polycoef="0 0 0 0 0"/>
+		<joint joint1="robot:hip_bend2" polycoef="0.532 0 0 0 0"/>
+		<joint joint1="robot:hip_lean2" polycoef="0 0 0 0 0"/>
+		<joint joint1="robot:hip_rot2" polycoef="0 0 0 0 0"/>
+		<joint joint1="robot:head_tilt" polycoef="0.4 0 0 0 0"/>
+		<joint joint1="robot:head_tilt_side" polycoef="0 0 0 0 0"/>
+		<joint joint1="robot:right_hip1" polycoef="-1.22 0 0 0 0"/>
+		<joint joint1="robot:right_hip2" polycoef="-0.70 0 0 0 0"/>
+		<joint joint1="robot:right_hip3" polycoef="0.538 0 0 0 0"/>
+		<joint joint1="robot:right_knee" polycoef="-1.45 0 0 0 0"/>
+		<joint joint1="robot:left_hip1" polycoef="-1.41 0 0 0 0"/>
+		<joint joint1="robot:left_hip2" polycoef="-0.823 0 0 0 0"/>
+		<joint joint1="robot:left_hip3" polycoef="0.612 0 0 0 0"/>
+		<joint joint1="robot:left_knee" polycoef="-2.14 0 0 0 0"/>
+	</equality>
+
+</mujocoinclude>

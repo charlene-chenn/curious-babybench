@@ -1,0 +1,12 @@
+<mujocoinclude>
+    <actuator>
+        <position class="mimo"	name="act:right_shoulder_horizontal" 	joint="robot:right_shoulder_horizontal" ctrlrange="-28 118"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_shoulder_abduction" 	joint="robot:right_shoulder_ad_ab" 		ctrlrange="-84 183"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_shoulder_internal" 		joint="robot:right_shoulder_rotation" 	ctrlrange="-99 67"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_elbow" 					joint="robot:right_elbow" 				ctrlrange="-146 5"		forcelimited="false"/>
+        <position class="mimo"	name="act:left_shoulder_horizontal" 	joint="robot:left_shoulder_horizontal" 	ctrlrange="-28 118"		forcelimited="false"/>
+        <position class="mimo"	name="act:left_shoulder_abduction" 		joint="robot:left_shoulder_ad_ab" 		ctrlrange="-84 183"		forcelimited="false"/>
+        <position class="mimo"	name="act:left_shoulder_internal" 		joint="robot:left_shoulder_rotation" 	ctrlrange="-99 67"		forcelimited="false"/>
+        <position class="mimo"	name="act:left_elbow" 					joint="robot:left_elbow" 				ctrlrange="-146 5"		forcelimited="false"/>
+    </actuator>
+</mujocoinclude>

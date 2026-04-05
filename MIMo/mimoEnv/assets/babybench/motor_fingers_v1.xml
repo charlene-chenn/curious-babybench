@@ -1,0 +1,6 @@
+<mujocoinclude>
+    <actuator>
+        <motor class="mimo" name="act:right_fingers" 					joint="robot:right_fingers" 			gear=".69"			forcerange="-1 .33" 	user="3.019 6.854 2.551"/>
+        <motor class="mimo" name="act:left_fingers" 					joint="robot:left_fingers" 				gear=".69" 			forcerange="-1 .33" 	user="3.019 6.854 2.551"/>
+    </actuator>
+</mujocoinclude>

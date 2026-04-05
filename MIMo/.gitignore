@@ -1,0 +1,7 @@
+.idea/*
+*.pyc
+__pycache__/
+*egg-info/
+mimoEnv/imgs/*
+mimoEnv/models/*
+mimoEnv/benchmarks

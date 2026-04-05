@@ -1,0 +1,48 @@
+<mujocoinclude>
+    <actuator>
+        <position class="mimo"	name="act:right_ff_side" 			 		joint="robot:right_ff_side" 			ctrlrange="-25 25"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_ff_knuckle" 			 	joint="robot:right_ff_knuckle"			ctrlrange="-20 90"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_ff_middle" 				 	joint="robot:right_ff_middle"			ctrlrange="-5 100"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_ff_distal" 				 	joint="robot:right_ff_distal"			ctrlrange="-5 80"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_mf_side" 			 		joint="robot:right_mf_side" 			ctrlrange="-25 25"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_mf_knuckle" 			 	joint="robot:right_mf_knuckle"			ctrlrange="-20 90"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_mf_middle" 			 		joint="robot:right_mf_middle"			ctrlrange="-5 100"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_mf_distal" 				 	joint="robot:right_mf_distal"			ctrlrange="-5 80"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_rf_side"  					joint="robot:right_rf_side" 			ctrlrange="-25 25"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_rf_knuckle" 			 	joint="robot:right_rf_knuckle"			ctrlrange="-20 90"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_rf_middle" 			 		joint="robot:right_rf_middle" 			ctrlrange="-5 100"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_rf_distal" 				 	joint="robot:right_rf_distal" 			ctrlrange="-5 80"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_lf_side" 					joint="robot:right_lf_side" 			ctrlrange="-25 25"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_lf_meta" 					joint="robot:right_lf_meta" 			ctrlrange="0 40"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_lf_knuckle" 			 	joint="robot:right_lf_knuckle" 			ctrlrange="-20 90"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_lf_middle" 				 	joint="robot:right_lf_middle" 			ctrlrange="-5 100"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_lf_distal" 				 	joint="robot:right_lf_distal" 			ctrlrange="-5 80"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_thumb_side" 			 	joint="robot:right_th_swivel" 			ctrlrange="10 110"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_thumb_add" 					joint="robot:right_th_adduction" 		ctrlrange="-60 0"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_thumb_pivot" 				joint="robot:right_th_pivot" 			ctrlrange="-10 10"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_thumb_middle" 			 	joint="robot:right_th_middle" 			ctrlrange="0 90"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_thumb_distal" 			 	joint="robot:right_th_distal" 			ctrlrange="0 90"		forcelimited="false"/>
+        <position class="mimo"	name="act:left_ff_side" 		 			joint="robot:left_ff_side" 				ctrlrange="-25 25"      forcelimited="false"/>
+        <position class="mimo"	name="act:left_ff_knuckle" 				 	joint="robot:left_ff_knuckle" 			ctrlrange="-20 90"      forcelimited="false"/>
+        <position class="mimo"	name="act:left_ff_middle" 				 	joint="robot:left_ff_middle" 			ctrlrange="-5 100"      forcelimited="false"/>
+        <position class="mimo"	name="act:left_ff_distal" 				 	joint="robot:left_ff_distal" 			ctrlrange="-5 80"	    forcelimited="false"/>
+        <position class="mimo"	name="act:left_mf_side" 		 			joint="robot:left_mf_side" 				ctrlrange="-25 25"      forcelimited="false"/>
+        <position class="mimo"	name="act:left_mf_knuckle" 			 		joint="robot:left_mf_knuckle" 			ctrlrange="-20 90"      forcelimited="false"/>
+        <position class="mimo"	name="act:left_mf_middle" 			 		joint="robot:left_mf_middle" 			ctrlrange="-5 100"      forcelimited="false"/>
+        <position class="mimo"	name="act:left_mf_distal" 				 	joint="robot:left_mf_distal" 			ctrlrange="-5 80"	    forcelimited="false"/>
+        <position class="mimo"	name="act:left_rf_side" 		 			joint="robot:left_rf_side" 				ctrlrange="-25 25"      forcelimited="false"/>
+        <position class="mimo"	name="act:left_rf_knuckle" 			 		joint="robot:left_rf_knuckle" 			ctrlrange="-20 90"      forcelimited="false"/>
+        <position class="mimo"	name="act:left_rf_middle" 			 		joint="robot:left_rf_middle" 			ctrlrange="-5 100"      forcelimited="false"/>
+        <position class="mimo"	name="act:left_rf_distal" 			 		joint="robot:left_rf_distal" 			ctrlrange="-5 80"	    forcelimited="false"/>
+        <position class="mimo"	name="act:left_lf_side" 		 			joint="robot:left_lf_side" 				ctrlrange="-25 25"      forcelimited="false"/>
+        <position class="mimo"	name="act:left_lf_meta" 			 		joint="robot:left_lf_meta" 				ctrlrange="0 40"		forcelimited="false"/>
+        <position class="mimo"	name="act:left_lf_knuckle" 				 	joint="robot:left_lf_knuckle" 			ctrlrange="-20 90"      forcelimited="false"/>
+        <position class="mimo"	name="act:left_lf_middle" 				 	joint="robot:left_lf_middle" 			ctrlrange="-5 100"      forcelimited="false"/>
+        <position class="mimo"	name="act:left_lf_distal" 				 	joint="robot:left_lf_distal" 			ctrlrange="-5 80"	    forcelimited="false"/>
+        <position class="mimo"	name="act:left_thumb_side" 			 		joint="robot:left_th_swivel" 			ctrlrange="10 110"      forcelimited="false"/>
+        <position class="mimo"	name="act:left_thumb_add" 					joint="robot:left_th_adduction" 		ctrlrange="-60 0"	    forcelimited="false"/>
+        <position class="mimo"	name="act:left_thumb_pivot" 				joint="robot:left_th_pivot" 			ctrlrange="-10 10"      forcelimited="false"/>
+        <position class="mimo"	name="act:left_thumb_middle" 			 	joint="robot:left_th_middle" 			ctrlrange="0 90"		forcelimited="false"/>
+        <position class="mimo"	name="act:left_thumb_distal" 			 	joint="robot:left_th_distal" 			ctrlrange="0 90"		forcelimited="false"/>
+    </actuator>
+</mujocoinclude>

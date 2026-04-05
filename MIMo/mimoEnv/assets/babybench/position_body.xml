@@ -1,0 +1,7 @@
+<mujocoinclude>
+    <actuator>
+		<position class="mimo"	name="act:hip_bend" 	joint="robot:hip_bend1"     ctrlrange="-17 30.5"	forcelimited="false"/>
+        <position class="mimo"	name="act:hip_twist" 	joint="robot:hip_rot1"      ctrlrange="-18 18"	    forcelimited="false"/>
+        <position class="mimo"	name="act:hip_lean" 	joint="robot:hip_lean1"     ctrlrange="-14 14"	    forcelimited="false"/>
+    </actuator>
+</mujocoinclude>

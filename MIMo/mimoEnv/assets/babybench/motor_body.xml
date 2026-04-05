@@ -1,0 +1,7 @@
+<mujocoinclude>
+    <actuator>
+		<motor class="mimo"	name="act:hip_bend" 	joint="robot:hip_bend1" gear="10.58" 	forcerange="-1 .765"	user=".8574 32.93 22.97"/>
+        <motor class="mimo"	name="act:hip_twist" 	joint="robot:hip_rot1" 	gear="3.63" 	forcerange="-1 1"		user="1.699 8.136 8.136"/>
+        <motor class="mimo"	name="act:hip_lean" 	joint="robot:hip_lean1" gear="7.25" 	forcerange="-1 1"		user="1.278 1.264 1.264"/>
+    </actuator>
+</mujocoinclude>

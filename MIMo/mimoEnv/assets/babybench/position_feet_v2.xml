@@ -1,0 +1,14 @@
+<mujocoinclude>
+    <actuator>
+        <position class="mimo"	name="act:right_foot_flexion" 		joint="robot:right_foot1" 			ctrlrange="-63 32"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_foot_inversion" 	joint="robot:right_foot2" 			ctrlrange="-33 31"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_foot_rotation" 		joint="robot:right_foot3"	 		ctrlrange="-20 30"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_toes" 				joint="robot:right_toes"	 		ctrlrange="-60 80"		forcelimited="false"/>
+        <position class="mimo"	name="act:right_big_toe" 		    joint="robot:right_big_toe"	 		ctrlrange="-60 80"		forcelimited="false"/>
+        <position class="mimo"	name="act:left_foot_flexion" 		joint="robot:left_foot1" 			ctrlrange="-63 32"		forcelimited="false"/>
+        <position class="mimo"	name="act:left_foot_inversion" 		joint="robot:left_foot2" 			ctrlrange="-33 31"		forcelimited="false"/>
+        <position class="mimo"	name="act:left_foot_rotation" 		joint="robot:left_foot3" 			ctrlrange="-20 30"		forcelimited="false"/>
+        <position class="mimo"	name="act:left_toes" 				joint="robot:left_toes"	 			ctrlrange="-60 80"		forcelimited="false"/>
+        <position class="mimo"	name="act:left_big_toe" 			joint="robot:left_big_toe"	 		ctrlrange="-60 80"		forcelimited="false"/>
+    </actuator>
+</mujocoinclude>

@@ -1,0 +1,7 @@
+# Results directory
+results/
+files/results/
+files/files/results/
+
+# Unwanted files
+.DS_Store

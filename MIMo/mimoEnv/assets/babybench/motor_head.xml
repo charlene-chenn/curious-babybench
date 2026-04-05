@@ -1,0 +1,7 @@
+<mujocoinclude>
+    <actuator>
+		<motor class="mimo"	name="act:head_swivel" 		joint="robot:head_swivel" 		gear="1.8" 	forcerange="-1 1"		user=".6665 24.87 24.87"/>
+        <motor class="mimo"	name="act:head_tilt" 		joint="robot:head_tilt" 		gear="3.3" 	forcerange="-1 .55"		user=".9338 31.39 16.86"/>
+        <motor class="mimo"	name="act:head_tilt_side" 	joint="robot:head_tilt_side" 	gear="1.8" 	forcerange="-1 1"		user="1.068 15.69 15.69"/>
+    </actuator>
+</mujocoinclude>

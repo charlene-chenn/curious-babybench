@@ -1,0 +1,10 @@
+<mujocoinclude>
+    <actuator>
+		<motor class="mimo" name="act:left_eye_horizontal" 				joint="robot:left_eye_horizontal" 		gear=".0054" 		forcerange="-1 1"		user="5.110 .03025 .03025"/>
+        <motor class="mimo" name="act:left_eye_vertical" 				joint="robot:left_eye_vertical" 		gear=".0054" 		forcerange="-1 1"		user="6.179 .02619 .02771"/>
+        <motor class="mimo" name="act:left_eye_torsional" 				joint="robot:left_eye_torsional" 		gear=".0037" 		forcerange="-1 1"		user="25.03 .003686 .003686"/>
+        <motor class="mimo" name="act:right_eye_horizontal" 			joint="robot:right_eye_horizontal" 		gear=".0054" 		forcerange="-1 1"		user="5.110 .03025 .03025"/>
+        <motor class="mimo" name="act:right_eye_vertical" 				joint="robot:right_eye_vertical" 		gear=".0054" 		forcerange="-1 1"		user="6.179 .02619 .02771"/>
+        <motor class="mimo" name="act:right_eye_torsional" 				joint="robot:right_eye_torsional" 		gear=".0037" 		forcerange="-1 1"		user="25.03 .003686 .003686"/>
+    </actuator>
+</mujocoinclude>

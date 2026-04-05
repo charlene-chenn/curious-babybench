@@ -1,0 +1,6 @@
+<mujocoinclude>
+    <actuator>
+        <position class="mimo" name="act:right_fingers" 				joint="robot:right_fingers" 			ctrlrange="-160 8"		forcelimited="false"/>
+        <position class="mimo" name="act:left_fingers" 					joint="robot:left_fingers" 				ctrlrange="-160 8"		forcelimited="false"/>
+    </actuator>
+</mujocoinclude>

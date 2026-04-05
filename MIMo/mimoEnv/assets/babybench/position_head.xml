@@ -1,0 +1,7 @@
+<mujocoinclude>
+    <actuator>
+		<position class="mimo"	name="act:head_swivel" 		joint="robot:head_swivel" 		ctrlrange="-111 111"	forcelimited="false"/>
+        <position class="mimo"	name="act:head_tilt" 		joint="robot:head_tilt" 		ctrlrange="-70 81"		forcelimited="false"/>
+        <position class="mimo"	name="act:head_tilt_side" 	joint="robot:head_tilt_side" 	ctrlrange="-70 70"		forcelimited="false"/>
+    </actuator>
+</mujocoinclude>

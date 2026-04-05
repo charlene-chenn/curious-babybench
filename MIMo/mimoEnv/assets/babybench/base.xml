@@ -1,0 +1,37 @@
+<mujocoinclude>
+    <compiler inertiafromgeom="true" angle="degree"/>
+    <option timestep="0.005" iterations="50" tolerance="1e-10" solver="Newton" jacobian="dense" cone="elliptic" impratio="1.0"/>
+    <size nconmax="1000" njmax="5000" nstack="10000000"/>
+    <visual>
+        <map force="0.1" fogend="10" shadowclip="3" />
+        <headlight active="0" />
+        <quality shadowsize="0"/>
+    </visual>
+    <asset>
+        <texture type="skybox" builtin="gradient" rgb1=".8 .8 .8" rgb2=".9 .9 .9" width="100" height="100"/>
+        <material name="mattransparent" reflectance="0" shininess="0" specular="0" rgba="1 1 1 0"/>
+        <texture name="texfloor" builtin="checker" height="100" width="100" rgb1="0.9 0.9 0.9" rgb2="0.9 0.9 0.9" type="2d" mark="edge" markrgb="0.7 0.7 0.7"/>
+        <material name="matfloor" reflectance="0" shininess="0" specular="0" texrepeat="25 25" texture="texfloor"/>
+        <texture name="texwall" type="2d" builtin="flat" height="100" width="100" rgb1="0.99 0.99 0.99"/>
+        <material name="matwall" reflectance="0" shininess="0" specular="0" texuniform="true" texture="texwall"/>
+        <texture name="texrug" type="cube" filefront="base_rug.png" rgb1="0.6 0.6 0.6"/>
+        <material name="matrug" reflectance="0" shininess=".1" specular="0.5" texrepeat="50 50" texture="texrug"/>
+    </asset>
+    <worldbody>
+        <light pos="0 0 5" dir="0 0 -1" directional="true" ambient="0.2 0.2 0.2" diffuse="0.1 0.1 0.1" specular="0 0 0"/>
+        <light pos="2 2 2" dir="-1 -1 -1" directional="true" ambient="0.05 0.05 0.05" diffuse="0.2 0.2 0.2" specular="0.3 0.3 0.3" castshadow="false"/>
+        <light pos="2 -2 2" dir="-1 1 -1" directional="true" ambient="0.05 0.05 0.05" diffuse="0.2 0.2 0.2" specular="0.3 0.3 0.3" castshadow="false"/>
+        <light pos="-2 2 2" dir="1 -1 -1" directional="true" ambient="0.05 0.05 0.05" diffuse="0.2 0.2 0.2" specular="0.3 0.3 0.3" castshadow="false"/>
+        <light pos="-2 -2 2" dir="1 1 -1" directional="true" ambient="0.05 0.05 0.05" diffuse="0.2 0.2 0.2" specular="0.3 0.3 0.3" castshadow="false"/>
+        
+        <camera name="corner" pos="3 -3 3" fovy="20" mode="targetbody" target="mimo_location"/>
+        <camera name="top" pos="0 0 2" euler="0 0 90" mode="fixed"/>
+        <camera name="side1" pos="2 0 .5" euler="90 90 0" mode="fixed"/>
+        <camera name="side2" pos="0 2 .5" euler="90 180 0" mode="fixed"/>
+        <camera name="closeup" pos="0.25 -0.25 1" mode="targetbody" target="mimo_location"/>
+
+        <geom name="transparent" size="2 2 .0001" type="plane"  material="mattransparent" pos="0 0 0" conaffinity="1"/>
+        <geom name="floor" size="2 2 .01" type="plane"  material="matfloor" pos="0 0 -0.01" conaffinity="1"/>
+        <geom name="rug" size="1 .0045" material="matrug" type="cylinder" pos="0 0 -0.005" euler="0 0 0" conaffinity="1"/>
+    </worldbody>
+</mujocoinclude>

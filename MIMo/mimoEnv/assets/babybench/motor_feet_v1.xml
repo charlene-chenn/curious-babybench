@@ -1,0 +1,12 @@
+<mujocoinclude>
+    <actuator>
+        <motor class="mimo"	name="act:right_foot_flexion" 				joint="robot:right_foot1" 				gear="3.78"			forcerange="-1 .5"		user="1.430 21.34 11.87"/>
+        <motor class="mimo"	name="act:right_foot_inversion" 			joint="robot:right_foot2" 				gear="1.16"			forcerange="-.91 1"		user="1.988 4.184 4.645"/>
+        <motor class="mimo"	name="act:right_foot_rotation" 				joint="robot:right_foot3"	 			gear="1.2"			forcerange="-1 1"		user="2.688 3.868 3.625"/>
+        <motor class="mimo"	name="act:right_toes" 						joint="robot:right_toes"	 			gear=".33"			forcerange="-1 .3" 		user="1.290 2.947 .8440"/>
+        <motor class="mimo"	name="act:left_foot_flexion" 				joint="robot:left_foot1" 				gear="3.78"			forcerange="-1 .5"		user="1.430 21.34 11.87"/>
+        <motor class="mimo"	name="act:left_foot_inversion" 				joint="robot:left_foot2" 				gear="1.16"			forcerange="-.91 1"		user="1.988 4.184 4.645"/>
+        <motor class="mimo"	name="act:left_foot_rotation" 				joint="robot:left_foot3" 				gear="1.2"			forcerange="-1 1"		user="2.688 3.868 3.625"/>
+        <motor class="mimo"	name="act:left_toes" 						joint="robot:left_toes"	 				gear=".33"			forcerange="-1 .3" 		user="1.290 2.947 .8440"/>
+    </actuator>
+</mujocoinclude>

@@ -1,0 +1,305 @@
+"""
+evaluate.py — Generate analysis plots for the self-touch world model project.
+
+=== WHAT THIS IS ===
+After training with different α values, run this script to produce the
+figures you need for your 3-minute video:
+  1. Learning curves per α condition
+  2. Touch count comparison across conditions
+  3. Body part coverage diversity
+  4. World model quality over time
+  5. Summary comparison table
+
+=== HOW TO RUN ===
+    python evaluate.py --results_dir results/
+
+This will scan all runs in results/ and produce comparative plots.
+"""
+
+import os
+import json
+import argparse
+import numpy as np
+from collections import defaultdict
+from typing import Dict, List
+
+# Try to import matplotlib — if not available, we'll create data-only output
+try:
+    import matplotlib
+    matplotlib.use("Agg")  # Non-interactive backend for headless environments
+    import matplotlib.pyplot as plt
+    HAS_MATPLOTLIB = True
+except ImportError:
+    HAS_MATPLOTLIB = False
+    print("[WARN] matplotlib not found — will generate data summaries only.")
+    print("       Install with: pip install matplotlib")
+
+
+def load_all_runs(results_dir: str) -> Dict[float, List[dict]]:
+    """
+    Load metrics from all runs, grouped by α value.
+
+    Returns:
+        {alpha_value: [list of metric dicts per episode]}
+    """
+    runs_by_alpha = defaultdict(list)
+
+    for run_name in os.listdir(results_dir):
+        run_path = os.path.join(results_dir, run_name)
+        metrics_path = os.path.join(run_path, "metrics.json")
+
+        if not os.path.isfile(metrics_path):
+            continue
+
+        with open(metrics_path, "r") as f:
+            metrics = json.load(f)
+
+        # Extract alpha from config or run name
+        config_path = os.path.join(run_path, "config.json")
+        if os.path.isfile(config_path):
+            with open(config_path, "r") as f:
+                config = json.load(f)
+            alpha = config.get("alpha", 0.5)
+        else:
+            # Parse from directory name: "alpha_0.5_seed_42"
+            try:
+                alpha = float(run_name.split("_")[1])
+            except (IndexError, ValueError):
+                alpha = 0.5
+
+        runs_by_alpha[alpha].append(metrics)
+
+    return dict(sorted(runs_by_alpha.items()))
+
+
+def smooth(values: np.ndarray, window: int = 10) -> np.ndarray:
+    """Simple moving average for smoother learning curves."""
+    if len(values) < window:
+        return values
+    kernel = np.ones(window) / window
+    return np.convolve(values, kernel, mode="valid")
+
+
+def extract_metric(runs: List[dict], key: str) -> np.ndarray:
+    """
+    Extract a metric across all runs, averaging over seeds.
+
+    Returns: [episodes] array of mean values
+    """
+    all_values = []
+    for run in runs:
+        values = [ep.get(key, 0) for ep in run]
+        all_values.append(values)
+
+    # Pad to same length
+    max_len = max(len(v) for v in all_values)
+    padded = np.zeros((len(all_values), max_len))
+    for i, v in enumerate(all_values):
+        padded[i, :len(v)] = v
+
+    return padded.mean(axis=0)
+
+
+def plot_learning_curves(runs_by_alpha: dict, save_dir: str):
+    """
+    Plot 1: Learning curves for each α condition.
+
+    === YOUR VIDEO NARRATIVE ===
+    "Here we see the cumulative extrinsic reward (touch) over training
+    for each α condition. The balanced conditions (α=0.25–0.75) learn
+    faster because curiosity drives the agent to discover touch events
+    earlier, while the task reward keeps it from wandering aimlessly."
+    """
+    if not HAS_MATPLOTLIB:
+        return
+
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+
+    colors = {
+        0.0: "#E24B4A",    # Red — pure cognitivist
+        0.25: "#D85A30",   # Coral
+        0.5: "#639922",    # Green — balanced
+        0.75: "#1D9E75",   # Teal
+        1.0: "#378ADD",    # Blue — pure emergent
+    }
+
+    # Panel 1: Extrinsic reward (touch)
+    ax = axes[0]
+    for alpha, runs in runs_by_alpha.items():
+        values = smooth(extract_metric(runs, "reward_extrinsic"))
+        color = colors.get(alpha, "#888780")
+        ax.plot(values, label=f"α={alpha}", color=color, linewidth=1.5)
+    ax.set_xlabel("Episode")
+    ax.set_ylabel("Extrinsic reward (touch)")
+    ax.set_title("Touch reward over training")
+    ax.legend(fontsize=8)
+    ax.grid(alpha=0.3)
+
+    # Panel 2: Intrinsic reward (RND)
+    ax = axes[1]
+    for alpha, runs in runs_by_alpha.items():
+        values = smooth(extract_metric(runs, "reward_intrinsic"))
+        color = colors.get(alpha, "#888780")
+        ax.plot(values, label=f"α={alpha}", color=color, linewidth=1.5)
+    ax.set_xlabel("Episode")
+    ax.set_ylabel("Intrinsic reward (RND)")
+    ax.set_title("Curiosity signal over training")
+    ax.legend(fontsize=8)
+    ax.grid(alpha=0.3)
+
+    # Panel 3: World model loss
+    ax = axes[2]
+    for alpha, runs in runs_by_alpha.items():
+        values = smooth(extract_metric(runs, "world_model_loss"))
+        color = colors.get(alpha, "#888780")
+        ax.plot(values, label=f"α={alpha}", color=color, linewidth=1.5)
+    ax.set_xlabel("Episode")
+    ax.set_ylabel("World model loss")
+    ax.set_title("World model quality")
+    ax.legend(fontsize=8)
+    ax.grid(alpha=0.3)
+
+    plt.tight_layout()
+    path = os.path.join(save_dir, "learning_curves.png")
+    plt.savefig(path, dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"  → Saved: {path}")
+
+
+def plot_touch_analysis(runs_by_alpha: dict, save_dir: str):
+    """
+    Plot 2: Touch count and body part diversity comparison.
+
+    === YOUR VIDEO NARRATIVE ===
+    "The bar chart on the left shows total self-touch events per condition.
+    Pure cognitivist (α=0) achieves many touches but they're repetitive —
+    the agent finds one easy touch and exploits it. The bar chart on the
+    right shows body part diversity: the curious agents (higher α) touch
+    MORE DIFFERENT body parts, even if their total count is lower."
+    """
+    if not HAS_MATPLOTLIB:
+        return
+
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+
+    alphas = sorted(runs_by_alpha.keys())
+    colors = ["#E24B4A", "#D85A30", "#639922", "#1D9E75", "#378ADD"]
+
+    # Panel 1: Total touches per condition
+    ax = axes[0]
+    touch_totals = []
+    for alpha in alphas:
+        values = extract_metric(runs_by_alpha[alpha], "touch_count")
+        touch_totals.append(values.sum())
+    bars = ax.bar(
+        [f"α={a}" for a in alphas], touch_totals,
+        color=colors[:len(alphas)], edgecolor="white", linewidth=0.5
+    )
+    ax.set_ylabel("Total touch events")
+    ax.set_title("Self-touch frequency")
+    ax.grid(axis="y", alpha=0.3)
+
+    # Panel 2: Body part diversity
+    ax = axes[1]
+    diversity = []
+    for alpha in alphas:
+        values = extract_metric(
+            runs_by_alpha[alpha], "body_parts_cumulative"
+        )
+        # Final cumulative value
+        diversity.append(values[-1] if len(values) > 0 else 0)
+    bars = ax.bar(
+        [f"α={a}" for a in alphas], diversity,
+        color=colors[:len(alphas)], edgecolor="white", linewidth=0.5
+    )
+    ax.set_ylabel("Body parts discovered")
+    ax.set_title("Touch diversity")
+    ax.grid(axis="y", alpha=0.3)
+
+    plt.tight_layout()
+    path = os.path.join(save_dir, "touch_analysis.png")
+    plt.savefig(path, dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"  → Saved: {path}")
+
+
+def print_summary_table(runs_by_alpha: dict):
+    """
+    Print a summary comparison table.
+
+    === YOUR VIDEO NARRATIVE ===
+    This table is perfect for showing side-by-side results in your video.
+    It maps directly to the "Results, interpretations, and impact" section.
+    """
+    print("\n" + "=" * 78)
+    print("  RESULTS SUMMARY")
+    print("=" * 78)
+    print(f"{'α':>6} | {'Condition':<20} | {'Touches':>8} | "
+          f"{'Parts':>6} | {'WM Loss':>8} | {'Final r_ext':>10}")
+    print("-" * 78)
+
+    for alpha in sorted(runs_by_alpha.keys()):
+        runs = runs_by_alpha[alpha]
+        touches = extract_metric(runs, "touch_count").sum()
+        parts = extract_metric(runs, "body_parts_cumulative")
+        final_parts = parts[-1] if len(parts) > 0 else 0
+        wm_loss = extract_metric(runs, "world_model_loss")
+        final_wm = wm_loss[-1] if len(wm_loss) > 0 else 0
+        r_ext = extract_metric(runs, "reward_extrinsic")
+        final_r = r_ext[-1] if len(r_ext) > 0 else 0
+
+        if alpha == 0.0:
+            condition = "Pure cognitivist"
+        elif alpha == 1.0:
+            condition = "Pure emergent"
+        else:
+            condition = f"Balanced ({alpha})"
+
+        print(f"{alpha:>6.2f} | {condition:<20} | {touches:>8.0f} | "
+              f"{final_parts:>6.0f} | {final_wm:>8.4f} | {final_r:>10.4f}")
+
+    print("=" * 78)
+    print()
+
+
+def generate_report(results_dir: str):
+    """Generate all evaluation outputs."""
+    print(f"\n[EVAL] Loading runs from {results_dir}/\n")
+
+    runs_by_alpha = load_all_runs(results_dir)
+
+    if not runs_by_alpha:
+        print("[EVAL] No completed runs found. Run train.py first.")
+        print("       Example: python train.py --alpha 0.5 --episodes 100")
+        return
+
+    print(f"[EVAL] Found {len(runs_by_alpha)} α conditions:")
+    for alpha, runs in runs_by_alpha.items():
+        n_seeds = len(runs)
+        n_eps = len(runs[0]) if runs else 0
+        print(f"  α={alpha}: {n_seeds} seed(s), {n_eps} episodes each")
+
+    # Create output directory
+    plots_dir = os.path.join(results_dir, "plots")
+    os.makedirs(plots_dir, exist_ok=True)
+
+    # Generate all outputs
+    print("\n[EVAL] Generating plots...")
+    plot_learning_curves(runs_by_alpha, plots_dir)
+    plot_touch_analysis(runs_by_alpha, plots_dir)
+    print_summary_table(runs_by_alpha)
+
+    print(f"[EVAL] All plots saved to {plots_dir}/")
+    print("[EVAL] Use these in your 3-minute video!")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Evaluate self-touch experiment results"
+    )
+    parser.add_argument(
+        "--results_dir", type=str, default="results",
+        help="Directory containing training runs"
+    )
+    args = parser.parse_args()
+    generate_report(args.results_dir)
