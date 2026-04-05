@@ -238,6 +238,85 @@ def plot_touch_analysis(runs_by_alpha: dict, save_dir: str):
     print(f"  → Saved: {path}")
 
 
+def extract_body_part_touches(runs: List[dict], body_parts: List[str]) -> Dict[str, float]:
+    """
+    Sum up per-body-part touch counts across all episodes and seeds.
+
+    Returns: {body_part: total_touches} averaged over seeds
+    """
+    totals = {part: 0.0 for part in body_parts}
+    n_seeds = len(runs)
+    for run in runs:
+        for ep in run:
+            bp_touches = ep.get("body_part_touches", {})
+            for part in body_parts:
+                totals[part] += bp_touches.get(part, 0)
+    if n_seeds > 0:
+        totals = {part: count / n_seeds for part, count in totals.items()}
+    return totals
+
+
+def plot_body_part_touches(runs_by_alpha: dict, save_dir: str):
+    """
+    Plot per-body-part touch frequency for each α condition.
+
+    Shows a grouped bar chart so you can compare which body parts each
+    condition touches most, revealing whether curiosity-driven agents
+    explore more diverse regions of the body.
+    """
+    if not HAS_MATPLOTLIB:
+        return
+
+    body_parts = [
+        "head", "torso", "left_arm", "right_arm",
+        "left_hand", "right_hand", "left_leg", "right_leg"
+    ]
+    # Try to detect body parts from data
+    for alpha, runs in runs_by_alpha.items():
+        for ep in runs[0]:
+            bp = ep.get("body_part_touches", {})
+            if bp:
+                body_parts = list(bp.keys())
+                break
+        break
+
+    alphas = sorted(runs_by_alpha.keys())
+    colors = {
+        0.0: "#E24B4A",
+        0.25: "#D85A30",
+        0.5: "#639922",
+        0.75: "#1D9E75",
+        1.0: "#378ADD",
+    }
+
+    n_parts = len(body_parts)
+    n_alphas = len(alphas)
+    bar_width = 0.8 / n_alphas
+    x = np.arange(n_parts)
+
+    fig, ax = plt.subplots(figsize=(12, 5))
+    for i, alpha in enumerate(alphas):
+        touches = extract_body_part_touches(runs_by_alpha[alpha], body_parts)
+        counts = [touches[part] for part in body_parts]
+        offset = (i - n_alphas / 2 + 0.5) * bar_width
+        color = colors.get(alpha, "#888780")
+        ax.bar(x + offset, counts, bar_width, label=f"α={alpha}",
+               color=color, edgecolor="white", linewidth=0.5)
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(body_parts, rotation=30, ha="right")
+    ax.set_ylabel("Total touch count (avg over seeds)")
+    ax.set_title("Body part touch frequency by condition")
+    ax.legend(fontsize=8)
+    ax.grid(axis="y", alpha=0.3)
+
+    plt.tight_layout()
+    path = os.path.join(save_dir, "body_part_touches.png")
+    plt.savefig(path, dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"  → Saved: {path}")
+
+
 def print_summary_table(runs_by_alpha: dict):
     """
     Print a summary comparison table.
@@ -302,6 +381,7 @@ def generate_report(results_dir: str):
     print("\n[EVAL] Generating plots...")
     plot_learning_curves(runs_by_alpha, plots_dir)
     plot_touch_analysis(runs_by_alpha, plots_dir)
+    plot_body_part_touches(runs_by_alpha, plots_dir)
     print_summary_table(runs_by_alpha)
 
     print(f"[EVAL] All plots saved to {plots_dir}/")

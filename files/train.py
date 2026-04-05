@@ -374,6 +374,7 @@ def train(config: Config):
         episode_reward_int = 0
         episode_touches = 0
         episode_parts = set()
+        episode_part_touches = {part: 0 for part in config.body_part_groups}
         episode_wm_loss = 0
         episode_rnd_loss = 0
 
@@ -409,6 +410,8 @@ def train(config: Config):
             episode_reward_int += reward_int
             episode_touches += info["touch_count"]
             episode_parts.update(info["parts_touched"])
+            for part in info["parts_touched"]:
+                episode_part_touches[part] += 1
 
             obs = next_obs
             if done:
@@ -464,6 +467,7 @@ def train(config: Config):
             "touch_count": episode_touches,
             "body_parts_this_ep": len(episode_parts),
             "body_parts_cumulative": len(all_body_parts_ever_touched),
+            "body_part_touches": episode_part_touches,
             "world_model_loss": episode_wm_loss,
             "rnd_loss": episode_rnd_loss,
             "alpha": config.alpha,
