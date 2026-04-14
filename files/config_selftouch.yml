@@ -4,7 +4,7 @@
 
 # --- General --- #
 
-save_dir : files/results
+save_dir : files/results2
 behavior : self_touch        # options: self_touch, hand_regard
 scene : crib                 # options: base, crib, cubes
 max_episode_steps : 1000

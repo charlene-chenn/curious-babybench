@@ -158,7 +158,8 @@ def plot_learning_curves(runs_by_alpha: dict, save_dir: str):
         ax.plot(values, label=f"α={alpha}", color=color, linewidth=1.5)
     ax.set_xlabel("Episode")
     ax.set_ylabel("Intrinsic reward (RND)")
-    ax.set_title("Curiosity signal over training")
+    ax.set_yscale("log")
+    ax.set_title("Curiosity signal over training (log scale)")
     ax.legend(fontsize=8)
     ax.grid(alpha=0.3)
 
@@ -260,54 +261,65 @@ def plot_body_part_touches(runs_by_alpha: dict, save_dir: str):
     """
     Plot per-body-part touch frequency for each α condition.
 
-    Shows a grouped bar chart so you can compare which body parts each
-    condition touches most, revealing whether curiosity-driven agents
-    explore more diverse regions of the body.
+    X-axis is α value, each bar group shows touches per body region
+    (head, torso, arm, hand, leg — left/right combined).
     """
     if not HAS_MATPLOTLIB:
         return
 
-    body_parts = [
+    # Raw body parts from data (or defaults)
+    raw_parts = [
         "head", "torso", "left_arm", "right_arm",
         "left_hand", "right_hand", "left_leg", "right_leg"
     ]
-    # Try to detect body parts from data
     for alpha, runs in runs_by_alpha.items():
         for ep in runs[0]:
             bp = ep.get("body_part_touches", {})
             if bp:
-                body_parts = list(bp.keys())
+                raw_parts = list(bp.keys())
                 break
         break
 
+    # Stacked bars: left on bottom, right on top (same color, right hatched)
+    groups = [
+        ("head",  "head",      None,        "#E24B4A"),
+        ("torso", "torso",     None,        "#D85A30"),
+        ("arm",   "left_arm",  "right_arm", "#639922"),
+        ("hand",  "left_hand", "right_hand","#1D9E75"),
+        ("leg",   "left_leg",  "right_leg", "#378ADD"),
+    ]
+
     alphas = sorted(runs_by_alpha.keys())
-    colors = {
-        0.0: "#E24B4A",
-        0.25: "#D85A30",
-        0.5: "#639922",
-        0.75: "#1D9E75",
-        1.0: "#378ADD",
-    }
-
-    n_parts = len(body_parts)
     n_alphas = len(alphas)
-    bar_width = 0.8 / n_alphas
-    x = np.arange(n_parts)
+    n_groups = len(groups)
+    bar_width = 0.8 / n_groups
+    x = np.arange(n_alphas)
 
-    fig, ax = plt.subplots(figsize=(12, 5))
-    for i, alpha in enumerate(alphas):
-        touches = extract_body_part_touches(runs_by_alpha[alpha], body_parts)
-        counts = [touches[part] for part in body_parts]
-        offset = (i - n_alphas / 2 + 0.5) * bar_width
-        color = colors.get(alpha, "#888780")
-        ax.bar(x + offset, counts, bar_width, label=f"α={alpha}",
+    fig, ax = plt.subplots(figsize=(10, 5))
+    for i, (label, left_key, right_key, color) in enumerate(groups):
+        left_counts = []
+        right_counts = []
+        for alpha in alphas:
+            touches = extract_body_part_touches(runs_by_alpha[alpha], raw_parts)
+            left_counts.append(touches.get(left_key, 0))
+            right_counts.append(touches.get(right_key, 0) if right_key else 0)
+        offset = (i - n_groups / 2 + 0.5) * bar_width
+        # Bottom: left (or single for head/torso)
+        ax.bar(x + offset, left_counts, bar_width,
+               label=f"{label} (L)" if right_key else label,
                color=color, edgecolor="white", linewidth=0.5)
+        # Top: right (stacked)
+        if right_key:
+            ax.bar(x + offset, right_counts, bar_width, bottom=left_counts,
+                   label=f"{label} (R)",
+                   color=color, hatch="//", edgecolor="white", linewidth=0.5)
 
     ax.set_xticks(x)
-    ax.set_xticklabels(body_parts, rotation=30, ha="right")
+    ax.set_xticklabels([f"α={a}" for a in alphas])
+    ax.set_xlabel("Alpha (α)")
     ax.set_ylabel("Total touch count (avg over seeds)")
     ax.set_title("Body part touch frequency by condition")
-    ax.legend(fontsize=8)
+    ax.legend(fontsize=7, ncol=4, loc="upper right")
     ax.grid(axis="y", alpha=0.3)
 
     plt.tight_layout()

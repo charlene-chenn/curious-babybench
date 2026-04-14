@@ -223,7 +223,7 @@ class Config:
     save_interval: int = 100
     """Save model checkpoint every N episodes."""
 
-    results_dir: str = "results"
+    results_dir: str = "results2"
     """Directory for saving logs, checkpoints, and figures."""
 
     render_eval: bool = False
